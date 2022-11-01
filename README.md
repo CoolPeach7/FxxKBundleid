@@ -121,5 +121,5 @@ clang -shared -undefined dynamic_lookup -o ./uu.app/Contents/MacOS/lib.dylib ./a
 如果你的 Mac app 没有签名的话，此时应该已经达成我们的需求了。但是实践中我们肯定不是对自己导出的未签名 Mac app 下黑手。所以需要去掉这个签名或重签名。因为笔者没有钱买开发者账号，故不知道如何重签名。
 
 使用 codesign 去除签名
-codesign -f -s "iPhone Developer: Ding Ge (PZDFM6CK9C)" uu.app
+codesign -f -s "iPhone Developer: xxxxxx" uu.app
 ```
