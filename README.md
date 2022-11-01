@@ -1,3 +1,5 @@
+# IOS+OSX逆向去除应用Bundleid校验
+
 在 iOS 设备上安装多个同一个 App 的方式只有一种，修改 *Info.plist* 中的 `CFBundleIdentifier` 。
 
 > 在整个 iOS 生态中，Bundle Identifier 是作为一个 App 的唯一标识符存在。
@@ -32,21 +34,20 @@ NSBundle.mainBundle.infoDictionary[@"CFBundleIdentifier"];
 
 苹果钥匙串访问获取证书
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2ac0b973-90b9-4ff3-99fe-461fe87c975b/Untitled.png)
 
 对QQ进行解包
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ecf1b64e-1d1c-46d6-acb0-4ec2000b422a/Untitled.png)
+![Untitled](https://cdn.staticaly.com/gh/loplopuu23/blog-image@master/20221101/Untitled-1.547gvcnx70c0.webp)
 
 主要修改Info.plst文件,修改BundleIdentifier为任意值，并且修改qq.app为uu.app 在Info.plst修改对应值
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c68194cf-a041-4730-8572-aab770afdcdb/Untitled.png)
+![Untitled](https://cdn.staticaly.com/gh/loplopuu23/blog-image@master/20221101/Untitled-2.224oph2egmao.webp)
 
 ```jsx
-codesign -f -s "iPhone Developer: Ding Ge (PZDFM6CK9C)" uu.app --重签名
+codesign -f -s "iPhone Developer: xxxxx" uu.app --重签名
 ```
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e66c9dfc-27b4-441b-983f-a73745a88151/Untitled.png)
+![Untitled](https://cdn.staticaly.com/gh/loplopuu23/blog-image@master/20221101/Untitled-3.6ys2yx0rfd00.webp)
 
 登录后提示AppID验证失败，QQ做了Bundleid的校验 如果校验不对会登录失败
 
@@ -102,7 +103,7 @@ codesign -f -s "iPhone Developer: Ding Ge (PZDFM6CK9C)" uu.app --重签名
 > 在 App 运行时，除微信主二进制文件外，随着被加载到内存中的二进制还有：微信内置 Framework，微信所用到的系统 Framework，插件自身 dylib。而我们并不能保证系统 Framework 是否会调用、何时会调用 NSBundle 相关方法。如果系统 Framework 调用了相关方法，得到了假的 Bundle ID，则有可能出现无法预计的问题，甚至是出现了也找不到问题的bug。所以我们必须保证如果是系统调用的方法，要返回真实的 Bundle ID。同时，如果插件自身想要获取 Bundle ID，也应该要返回一个真实的 Bundle ID。于是提出需求：**如果是微信调用的方法，返回假值，否则返回真值。**我们可以通过 dyld 的 `dladdr()` 函数配合当前调用栈地址来判断**调用者**来自哪个二进制文件
 >
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/250aafdc-5c09-43c3-8c89-33066a633d58/Untitled.png)
+![Untitled](https://cdn.staticaly.com/gh/loplopuu23/blog-image@master/20221101/Untitled-4.6jiniqwkqdk0.webp)
 
 将以上代码保存为一个 Tweak.xm 文件(名字后缀名随意)，放在与uu.app 同级目录下，便于后续操作。
 
